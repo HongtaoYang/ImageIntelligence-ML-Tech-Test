@@ -21,12 +21,17 @@ def clustering_acc(y_true, y_pred):
 	
 	return sum([w[i, j] for i, j in ind]) * 1.0 / y_pred.size
 
-def read_data(data_path, samples_per_person):
+def read_data(data_path, samples_per_person, num_of_person):
 	all_samples = []
 	all_labels = []
 
 	all_subjs = os.listdir(data_path)
-	for n, subj in enumerate(all_subjs):
+	random.shuffle(all_subjs)
+
+	if num_of_person > 158:
+		num_of_person = 158
+
+	for n, subj in enumerate(all_subjs[0:num_of_person]):
 		im_feats = glob.glob(os.path.join(data_path, subj, '*.npy'))
 		num_feats = len(im_feats)
 		if samples_per_person is not None:
@@ -57,23 +62,53 @@ def read_data(data_path, samples_per_person):
 
 data_root = '/home/hongtao/my_projects/ImageIntelligence ML Tech Test/faces'
 
+# -----------------------------------------------------------------------------------------
+# num_of_person = 9999
+# if num_of_person > 158:
+# 	num_of_person = 158
+# all_feat_arr, all_labels = read_data(data_root, samples_per_person=None, num_of_person=num_of_person)
+# start = time.time()
+# sim_mat = distance.cdist(all_feat_arr, all_feat_arr, 'sqeuclidean')
+# agglo = AgglomerativeClustering(n_clusters=num_of_person, affinity='precomputed', linkage='average')
+# cluster = agglo.fit(sim_mat).labels_
+# end = time.time()
+# acc = clustering_acc(np.array(all_labels), cluster)
+# print end-start
+# print acc
 
-all_feat_arr, all_labels = read_data(data_root, samples_per_person=None)
-start = time.time()
-sim_mat = distance.cdist(all_feat_arr, all_feat_arr, 'sqeuclidean')
-agglo = AgglomerativeClustering(n_clusters=158, affinity='precomputed', linkage='average')
-cluster = agglo.fit(sim_mat).labels_
-end = time.time()
-acc = clustering_acc(np.array(all_labels), cluster)
-print end-start
-print acc
+
+# --------------------------------------------------------------------------------------------
+acc_record = []
+# time_record = []
+for num_person in range(5, 160, 5):
+	print num_person
+	all_feat_arr, all_labels = read_data(data_root, samples_per_person=None, num_of_person=num_person)
+
+	# compute the affinity matrix based on the squared Euclidean distance
+	# start = time.time()
+	sim_mat = distance.cdist(all_feat_arr, all_feat_arr, 'sqeuclidean')
+	agglo = AgglomerativeClustering(n_clusters=num_person, affinity='precomputed', linkage='average')
+	cluster = agglo.fit(sim_mat).labels_
+	# end = time.time()
+
+	# tiem_elapsed = end-start
+	acc = clustering_acc(np.array(all_labels), cluster)
+	acc_record.append(acc)
+	# time_record.append(tiem_elapsed)
+
+# plot the results
+plt.plot(range(5, 160, 5), acc_record)
+plt.ylabel('clustering accuracy')
+plt.xlabel('number of person')
+plt.show()
 
 
+# -------------------------------------------------------------------------------------------------
 # acc_record = []
 # # time_record = []
 # for num_imgs in range(5, 540, 10):
 # 	print num_imgs
-# 	all_feat_arr, all_labels = read_data(data_root, samples_per_person=num_imgs)
+# 	all_feat_arr, all_labels = read_data(data_root, samples_per_person=num_imgs, num_of_person=9999)
 
 # 	# compute the affinity matrix based on the squared Euclidean distance
 # 	# start = time.time()
