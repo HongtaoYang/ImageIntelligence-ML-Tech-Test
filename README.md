@@ -19,10 +19,10 @@ Based on the observations in Task 1, I decided to adapt the Cluster Center metho
 ## Task 3
 I chose the use agglomerative clustering algorithm to better explore the characterristic of the given embeddings. The algorithm is distance based bottom-up method, which is suitable in this situation. The clustering accuracy is 0.95 using all samples. The figure below shows how the number of samples per person affect the grouping accuracy.
 
-![acc num images](![alt text](https://raw.githubusercontent.com/username/projectname/branch/path/to/img.png)
+![acc num images](https://raw.githubusercontent.com/username/projectname/branch/path/to/img.png)
 
 This next figure shows the effect of number of persons on the accuracy.
 
-![acc num person]()
+![acc num person](https://github.com/HongtaoYang/ImageIntelligence-ML-Tech-Test/blob/master/acc_num_person.png?raw=true)
 
 Using all samples, the algorithm takes approximately 5 seconds to run. 
