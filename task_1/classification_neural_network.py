@@ -36,22 +36,6 @@ def read_data(data_path):
 
 
 data_root = '/home/hongtao/my_projects/ImageIntelligence ML Tech Test/faces'
-
-# feat_train = pickle.load(open('train_features.pkl', 'rb'))
-# feat_test = pickle.load(open('test_features.pkl', 'rb'))
-# label_train = pickle.load(open('train_labels.pkl', 'rb'))
-# label_test = pickle.load(open('test_labels.pkl', 'rb'))
-
-# print len(set(label_train))
-
-# # read numpy array into memory
-# feat_train_arr = np.empty([len(feat_train), 512], dtype=np.float32)
-# feat_test_arr = np.empty([len(feat_test), 512], dtype=np.float32)
-# for i, np_file in enumerate(feat_train):
-# 	feat_train_arr[i, :] = np.load(os.path.join(data_root, np_file))
-# for i, np_file in enumerate(feat_test):
-# 	feat_test_arr[i, :] = np.load(os.path.join(data_root, np_file))
-
 feat_train_arr, feat_test_arr, label_train, label_test = read_data(data_root)
 print feat_test_arr.shape
 
@@ -73,8 +57,6 @@ loss = tf.losses.softmax_cross_entropy(onehot_labels=label_in_onehot, logits=log
 optimizer = tf.train.AdamOptimizer(lr)
 train_op = optimizer.minimize(loss, global_step=global_step)
 
-# pred_prob = tf.nn.softmax(logits)
-# print pred_prob.get_shape()
 pred_prob = tf.nn.softmax(logits)
 pred = tf.argmax(pred_prob, axis=1)
 
@@ -91,14 +73,9 @@ with tf.Session() as sess:
 
 		sess.run(train_op, feed_dict=feed_dict)
 
-		# if i % 20 == 0:
-		# 	prediction = sess.run(pred, feed_dict=feed_dict)
-		# 	accuracy = accuracy_score(batch_label_in, prediction)
-		# 	print('accuracy at %d is %f' % (i, accuracy))
-
 		if i % 500 == 0:
 			feed_dict = {feat_in: feat_test_arr}
 			prediction = sess.run(pred, feed_dict=feed_dict)
 			accuracy = accuracy_score(label_test, prediction)
-			print('accuracy at %d is %f' % (i, accuracy))
+			print('testing accuracy at %d is %f' % (i, accuracy))
 
